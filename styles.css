@@ -503,7 +503,7 @@ select:focus {
     height: 320px;
     overflow: hidden;
     background-color: var(--color-surface-warm);
-    padding: var(--spacing-md);
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -528,7 +528,7 @@ select:focus {
 .card-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     transition: var(--transition-slow);
     cursor: pointer;
 }
@@ -1030,11 +1030,37 @@ footer {
 
     .footer-content {
         grid-template-columns: 1fr;
-        gap: var(--spacing-md);
+        gap: var(--spacing-sm);
+        /* Reduced gap */
         text-align: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .footer-brand,
+    .footer-nav ul,
+    .footer-contact {
+        align-items: center;
+        /* Center flex items */
+    }
+
+    .footer-logo {
+        width: 60px;
+        /* Smaller logo */
+        height: 60px;
+    }
+
+    .footer-brand h4 {
+        font-size: 1.4rem;
+        /* Smaller heading */
     }
 
     .footer-brand p {
         max-width: none;
+        font-size: 0.9rem;
+    }
+
+    .footer-nav h5,
+    .footer-contact h5 {
+        margin-bottom: 0.5rem;
     }
 }

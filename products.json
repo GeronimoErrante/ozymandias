@@ -4,7 +4,7 @@
     "name": "Barão De Cotegipe",
     "price": 5600,
     "promo_price": 10000,
-    "image": "yerbas/barao.jpg",
+    "image": "yerbas/barao.webp",
     "weight": "500g",
     "description": "Yerba mate despalada, padrón uruguayo. Sabor intenso y molienda fina.",
     "category": "uruguaya"
@@ -14,7 +14,7 @@
     "name": "Rei Verde Export",
     "price": 6500,
     "promo_price": 12000,
-    "image": "yerbas/rv.jpg",
+    "image": "yerbas/rv.webp",
     "weight": "500g",
     "description": "Despalada tipo uruguaya. Ideal para quienes buscan carácter y duración.",
     "category": "uruguaya"
@@ -24,7 +24,7 @@
     "name": "Baldo",
     "price": 6500,
     "promo_price": 12000,
-    "image": "yerbas/baldo.jpg",
+    "image": "yerbas/baldo.webp",
     "weight": "500g",
     "description": "La clásica uruguaya. Amargor equilibrado y excelente rendimiento.",
     "category": "uruguaya"
@@ -34,7 +34,7 @@
     "name": "Picada Vieja",
     "price": 4400,
     "promo_price": 8000,
-    "image": "yerbas/picadavieja.jpg",
+    "image": "yerbas/picadavieja.webp",
     "weight": "500g",
     "description": "Selección especial, secanza barbacuá. Notas ahumadas distintivas.",
     "category": "barbacua"
@@ -44,7 +44,7 @@
     "name": "Sol y Lluvia",
     "price": 5000,
     "promo_price": 9000,
-    "image": "yerbas/syl.jpg",
+    "image": "yerbas/syl.webp",
     "weight": "500g",
     "description": "Estilo barbacuá, estacionamiento natural. Sabor ahumado tradicional.",
     "category": "barbacua"
@@ -53,7 +53,7 @@
     "id": 6,
     "name": "Pindaré",
     "price": 9500,
-    "image": "yerbas/pindare.jpg",
+    "image": "yerbas/pindare.webp",
     "weight": "1kg",
     "description": "Yerba mate tradicional de alta calidad.",
     "category": "tradicional"
