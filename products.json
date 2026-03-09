@@ -57,5 +57,35 @@
     "weight": "1kg",
     "description": "Yerba mate tradicional de alta calidad.",
     "category": "tradicional"
+  },
+  {
+    "id": 7,
+    "name": "Rei Verde Clásica",
+    "price": 5500,
+    "promo_price": 10000,
+    "image": "yerbas/rv-classica.jpg",
+    "weight": "500g",
+    "description": "Yerba mate clásica de excelente calidad y sabor equilibrado.",
+    "category": "uruguaya"
+  },
+  {
+    "id": 8,
+    "name": "Rei Verde Premium",
+    "price": 7000,
+    "promo_price": 13000,
+    "image": "yerbas/rv-premium.jpg",
+    "weight": "500g",
+    "description": "Yerba mate premium, selección especial para los paladares más exigentes.",
+    "category": "uruguaya"
+  },
+  {
+    "id": 9,
+    "name": "Verdecita",
+    "price": 5500,
+    "promo_price": 10000,
+    "image": "yerbas/verdecita.jpg",
+    "weight": "500g",
+    "description": "Yerba mate de intenso sabor y calidad superior.",
+    "category": "tradicional"
   }
 ]
