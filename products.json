@@ -87,5 +87,15 @@
     "weight": "500g",
     "description": "Yerba mate de intenso sabor y calidad superior.",
     "category": "tradicional"
+  },
+  {
+    "id": 10,
+    "name": "Rei Verde Padrón Argentino (con palo)",
+    "price": 5500,
+    "promo_price": 10000,
+    "image": "yerbas/rv roja.jpeg",
+    "weight": "500g",
+    "description": "Yerba mate Rei Verde Padrón argentino con palo. Oferta 2x10000.",
+    "category": "argentina"
   }
 ]
