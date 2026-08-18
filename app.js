@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leavesContainer = document.getElementById('leaves-container');
     const heroSection = document.getElementById('hero');
     const isDesktop = window.innerWidth >= 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const leafCount = isDesktop ? 30 : 15; // 30 leaves on desktop, 15 on mobile
 
     /**
@@ -66,13 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize all leaves once
-    initializeLeaves();
+    if (!prefersReducedMotion) {
+        initializeLeaves();
+    }
 
     // ===== MOUSE INTERACTION WITH LEAVES =====
-    if (isDesktop) {
+    if (isDesktop && !prefersReducedMotion) {
         const leaves = document.querySelectorAll('.leaf');
-        
+
         document.addEventListener('mousemove', (e) => {
             const rect = heroSection.getBoundingClientRect();
 
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Distance from mouse to leaf
                     const distance = Math.sqrt(
-                        Math.pow(mouseX - leafCenterX, 2) + 
+                        Math.pow(mouseX - leafCenterX, 2) +
                         Math.pow(mouseY - leafCenterY, 2)
                     );
 
@@ -124,12 +126,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ===== EXISTING CODE =====
-    const productGrid = document.getElementById('product-grid');
-    const categoryFilter = document.getElementById('category-filter');
-    const priceSort = document.getElementById('price-sort');
+    // ===== HEADER: transparent over the hero, solid once scrolled =====
+    const header = document.getElementById('main-header');
 
-    // Theme Toggle
+    function syncHeader() {
+        header.classList.toggle('scrolled', window.scrollY > 40);
+    }
+
+    syncHeader();
+    window.addEventListener('scroll', syncHeader, { passive: true });
+
+    // ===== MOBILE NAV =====
+    const navToggle = document.getElementById('nav-toggle');
+    const mainNav = document.getElementById('main-nav');
+
+    function setNav(open) {
+        navToggle.setAttribute('aria-expanded', String(open));
+        navToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+        mainNav.classList.toggle('is-open', open);
+        header.classList.toggle('nav-open', open);
+        document.body.classList.toggle('nav-locked', open);
+    }
+
+    navToggle.addEventListener('click', () => {
+        setNav(navToggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Close the panel after picking a destination
+    mainNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setNav(false));
+    });
+
+    // ===== THEME TOGGLE =====
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
 
@@ -144,10 +172,69 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('theme', newTheme);
     });
 
+    // ===== CATALOG =====
+    const productGrid = document.getElementById('product-grid');
+    const categoryChips = document.getElementById('category-chips');
+    const priceSort = document.getElementById('price-sort');
+    const searchBox = document.getElementById('search-box');
+    const searchInput = document.getElementById('product-search');
+    const searchClear = document.getElementById('search-clear');
+    const resultsCount = document.getElementById('results-count');
+
+    // Readable names for the raw category values stored in products.json
+    const CATEGORY_LABELS = {
+        uruguaya: 'Sin palo',
+        barbacua: 'Barbacuá',
+        tradicional: 'Tradicional',
+        argentina: 'Con palo'
+    };
+
+    const currency = new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0
+    });
+
     // Make products accessible for the global modal function
     let products = [];
     window.products = []; // Expose globally just in case, though closure works if openModal is defined inside.
 
+    let activeCategory = 'all';
+    let searchTerm = '';
+
+    // Reveal cards as they enter the viewport
+    const revealObserver = 'IntersectionObserver' in window
+        ? new IntersectionObserver((entries, obs) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -60px 0px', threshold: 0.05 })
+        : null;
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+    }
+
+    // Fold accents so "pindare" matches "Pindaré"
+    function normalize(value) {
+        return String(value)
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '');
+    }
+
+    function whatsappLink(productName) {
+        return `https://wa.me/542346698477?text=Hola!%20Me%20interesa%20${encodeURIComponent(productName)}`;
+    }
 
     // Fetch products
     fetch('products.json')
@@ -161,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             products = data;
             window.products = data; // Keep global sync
             console.log('Productos cargados:', products.length);
-            renderProducts(products);
+            applyFilters();
         })
         .catch(error => {
             console.error('Error fetching products:', error);
@@ -177,78 +264,113 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        productsToRender.forEach(product => {
+        productsToRender.forEach((product, index) => {
             const card = document.createElement('div');
             card.classList.add('product-card');
 
-            // Format price to ARS currency
-            const formattedPrice = new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                minimumFractionDigits: 0
-            }).format(product.price);
+            const formattedPrice = currency.format(product.price);
+            const categoryLabel = CATEGORY_LABELS[product.category] || product.category;
 
             let promoHtml = '';
             if (product.promo_price) {
-                const formattedPromo = new Intl.NumberFormat('es-AR', {
-                    style: 'currency',
-                    currency: 'ARS',
-                    minimumFractionDigits: 0
-                }).format(product.promo_price);
-                promoHtml = `<div class="promo-badge">2 x ${formattedPromo}</div>`;
+                promoHtml = `<div class="promo-badge">2 x ${currency.format(product.promo_price)}</div>`;
             }
 
-            // Using onclick with global function for robustness as requested
             card.innerHTML = `
                 <div class="card-image">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy" onclick="window.openModal(${product.id})">
+                    <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy">
                     ${promoHtml}
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <span class="category-tag">${product.category}</span>
-                        <span class="product-weight">${product.weight}</span>
+                        <span class="category-tag">${escapeHtml(categoryLabel)}</span>
+                        <span class="product-weight">${escapeHtml(product.weight)}</span>
                     </div>
-                    <h3 class="product-title">${product.name}</h3>
-                    <p class="product-desc">${product.description}</p>
+                    <h3 class="product-title">${escapeHtml(product.name)}</h3>
+                    <p class="product-desc">${escapeHtml(product.description)}</p>
                     <div class="card-footer">
                         <span class="price">${formattedPrice}</span>
-                        <a href="https://wa.me/542346698477?text=Hola!%20Me%20interesa%20${encodeURIComponent(product.name)}" target="_blank" class="btn-add">Pedir</a>
+                        <a href="${whatsappLink(product.name)}" target="_blank" rel="noopener noreferrer" class="btn-add">Pedir</a>
                     </div>
                 </div>
             `;
+
+            card.querySelector('.card-image').addEventListener('click', () => window.openModal(product.id));
+
+            if (revealObserver) {
+                // Stagger so the grid fills in rather than popping at once
+                card.style.transitionDelay = `${Math.min(index, 8) * 60}ms`;
+                revealObserver.observe(card);
+            } else {
+                card.classList.add('is-visible');
+            }
 
             productGrid.appendChild(card);
         });
     }
 
-    // Filter products
-    function filterProducts() {
-        const selectedCategory = categoryFilter.value;
-        const sortValue = priceSort.value;
+    // Filter + search + sort
+    function applyFilters() {
+        const term = normalize(searchTerm.trim());
 
-        console.log('Filtrando por:', selectedCategory, 'Orden:', sortValue);
-
-        // 1. Filter
         let filtered = products.filter(product => {
-            if (selectedCategory === 'all') return true;
-            return product.category === selectedCategory;
+            const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+            if (!matchesCategory) return false;
+            if (!term) return true;
+            return normalize(product.name).includes(term) ||
+                normalize(product.description).includes(term) ||
+                normalize(CATEGORY_LABELS[product.category] || product.category).includes(term);
         });
 
-        console.log('Productos errontrados:', filtered.length);
-
-        // 2. Sort
+        const sortValue = priceSort.value;
         if (sortValue === 'asc') {
-            filtered.sort((a, b) => a.price - b.price);
+            filtered = [...filtered].sort((a, b) => a.price - b.price);
         } else if (sortValue === 'desc') {
-            filtered.sort((a, b) => b.price - a.price);
+            filtered = [...filtered].sort((a, b) => b.price - a.price);
         }
         // 'default' keeps original order (by id usually, or how they came in JSON)
+
+        resultsCount.textContent = filtered.length === 1
+            ? '1 producto'
+            : `${filtered.length} productos`;
 
         renderProducts(filtered);
     }
 
-    // Modal Elements
+    // Category chips
+    categoryChips.addEventListener('click', (event) => {
+        const chip = event.target.closest('.chip');
+        if (!chip) return;
+
+        activeCategory = chip.dataset.category;
+
+        categoryChips.querySelectorAll('.chip').forEach((item) => {
+            const isActive = item === chip;
+            item.classList.toggle('is-active', isActive);
+            item.setAttribute('aria-pressed', String(isActive));
+        });
+
+        applyFilters();
+    });
+
+    // Search
+    searchInput.addEventListener('input', () => {
+        searchTerm = searchInput.value;
+        searchBox.classList.toggle('has-value', searchTerm.length > 0);
+        applyFilters();
+    });
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchTerm = '';
+        searchBox.classList.remove('has-value');
+        applyFilters();
+        searchInput.focus();
+    });
+
+    priceSort.addEventListener('change', applyFilters);
+
+    // ===== MODAL =====
     const modal = document.getElementById('product-modal');
     const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
@@ -257,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDesc = document.getElementById('modal-desc');
     const modalPrice = document.getElementById('modal-price');
     const modalBtn = document.getElementById('modal-btn');
-    const closeModalSpan = document.getElementsByClassName('close-modal')[0];
+    const closeModalBtn = document.querySelector('.close-modal');
 
     // Open Modal Function
     window.openModal = function (id) {
@@ -267,48 +389,44 @@ document.addEventListener('DOMContentLoaded', () => {
         modalImg.src = product.image;
         modalImg.alt = product.name;
         modalTitle.textContent = product.name;
-        modalCategory.textContent = product.category;
+        modalCategory.textContent = CATEGORY_LABELS[product.category] || product.category;
         modalWeight.textContent = product.weight;
         modalDesc.textContent = product.description;
 
-        const formattedPrice = new Intl.NumberFormat('es-AR', {
-            style: 'currency',
-            currency: 'ARS',
-            minimumFractionDigits: 0
-        }).format(product.price);
-
         // Show promo price in modal if available
-        let priceDisplay = formattedPrice;
+        let priceDisplay = escapeHtml(currency.format(product.price));
         if (product.promo_price) {
-            const formattedPromo = new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                minimumFractionDigits: 0
-            }).format(product.promo_price);
-            priceDisplay = `${formattedPrice}<br><span class="modal-promo">Promoción: 2 x ${formattedPromo}</span>`;
+            priceDisplay += `<span class="modal-promo">Promoción: 2 x ${escapeHtml(currency.format(product.promo_price))}</span>`;
         }
 
         modalPrice.innerHTML = priceDisplay;
-        modalBtn.href = `https://wa.me/542346698477?text=Hola!%20Me%20interesa%20${encodeURIComponent(product.name)}`;
+        modalBtn.href = whatsappLink(product.name);
 
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden'; // Disable scroll
-    }
+        closeModalBtn.focus();
+    };
 
-    // Close Modal Logic
-    closeModalSpan.onclick = function () {
+    function closeModal() {
         modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Enable scroll
+        document.body.style.overflow = ''; // Enable scroll
     }
 
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scroll
+    closeModalBtn.addEventListener('click', closeModal);
+    closeModalBtn.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            closeModal();
         }
-    }
+    });
 
-    // Event Listeners
-    categoryFilter.addEventListener('change', filterProducts);
-    priceSort.addEventListener('change', filterProducts);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        if (modal.style.display === 'block') closeModal();
+        if (navToggle.getAttribute('aria-expanded') === 'true') setNav(false);
+    });
 });
