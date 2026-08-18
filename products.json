@@ -63,7 +63,7 @@
     "name": "Rei Verde Clásica",
     "price": 5500,
     "promo_price": 10000,
-    "image": "yerbas/rv-classica.jpg",
+    "image": "yerbas/rv-classica.webp",
     "weight": "500g",
     "description": "Yerba mate clásica de excelente calidad y sabor equilibrado.",
     "category": "uruguaya"
@@ -73,7 +73,7 @@
     "name": "Rei Verde Premium",
     "price": 7000,
     "promo_price": 13000,
-    "image": "yerbas/rv-premium.jpg",
+    "image": "yerbas/rv-premium.webp",
     "weight": "500g",
     "description": "Yerba mate premium, selección especial para los paladares más exigentes.",
     "category": "uruguaya"
@@ -83,7 +83,7 @@
     "name": "Verdecita",
     "price": 5500,
     "promo_price": 10000,
-    "image": "yerbas/verdecita.jpg",
+    "image": "yerbas/verdecita.webp",
     "weight": "500g",
     "description": "Yerba mate de intenso sabor y calidad superior.",
     "category": "tradicional"
@@ -93,9 +93,37 @@
     "name": "Rei Verde Padrón Argentino (con palo)",
     "price": 5500,
     "promo_price": 10000,
-    "image": "yerbas/rv roja.jpeg",
+    "image": "yerbas/rv-roja.webp",
     "weight": "500g",
     "description": "Yerba mate Rei Verde Padrón argentino con palo. Oferta 2x10000.",
     "category": "argentina"
+  },
+  {
+    "id": 11,
+    "name": "Canarias Suave",
+    "price": 13500,
+    "image": "yerbas/canarias-suave.webp",
+    "weight": "1kg",
+    "description": "Yerba mate tradicional sabor suave. Despalada, ideal para quienes prefieren un mate menos intenso.",
+    "category": "uruguaya"
+  },
+  {
+    "id": 12,
+    "name": "Canarias Serena",
+    "price": 12500,
+    "image": "yerbas/canarias-serena.webp",
+    "weight": "1kg",
+    "description": "Yerba mate despalada compuesta con hierbas. Sabor equilibrado y aromático, la clásica de Canarias.",
+    "category": "uruguaya"
+  },
+  {
+    "id": 13,
+    "name": "Canarias Té Verde y Jengibre",
+    "price": 7000,
+    "promo_price": 13000,
+    "image": "yerbas/canarias-te-verde.webp",
+    "weight": "500g",
+    "description": "Yerba mate compuesta con té verde y jengibre. Fresca y con un toque especiado.",
+    "category": "compuesta"
   }
 ]
