@@ -22,8 +22,8 @@
   {
     "id": 3,
     "name": "Baldo",
-    "price": 6500,
-    "promo_price": 12000,
+    "price": 7500,
+    "promo_price": 14000,
     "image": "yerbas/baldo.webp",
     "weight": "500g",
     "description": "La clásica uruguaya. Amargor equilibrado y excelente rendimiento.",
@@ -95,7 +95,7 @@
     "promo_price": 10000,
     "image": "yerbas/rv-roja.webp",
     "weight": "500g",
-    "description": "Yerba mate Rei Verde Padrón argentino con palo. Oferta 2x10000.",
+    "description": "Yerba mate Rei Verde Padrón argentino con palo. Oferta: kilo x $10.000.",
     "category": "argentina"
   },
   {

@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let promoHtml = '';
             if (product.promo_price) {
-                promoHtml = `<div class="promo-badge">2 x ${currency.format(product.promo_price)}</div>`;
+                promoHtml = `<div class="promo-badge">Kilo x ${currency.format(product.promo_price)}</div>`;
             }
 
             card.innerHTML = `
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show promo price in modal if available
         let priceDisplay = escapeHtml(currency.format(product.price));
         if (product.promo_price) {
-            priceDisplay += `<span class="modal-promo">Promoción: 2 x ${escapeHtml(currency.format(product.promo_price))}</span>`;
+            priceDisplay += `<span class="modal-promo">Promoción: Kilo x ${escapeHtml(currency.format(product.promo_price))}</span>`;
         }
 
         modalPrice.innerHTML = priceDisplay;
