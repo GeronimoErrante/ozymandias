@@ -276,10 +276,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 promoHtml = `<div class="promo-badge">Kilo x ${currency.format(product.promo_price)}</div>`;
             }
 
+            const outOfStock = Boolean(product.out_of_stock);
+            card.classList.toggle('is-out-of-stock', outOfStock);
+            const ribbonHtml = outOfStock ? '<div class="stock-ribbon">Sin Stock</div>' : '';
+
             card.innerHTML = `
                 <div class="card-image">
                     <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy">
                     ${promoHtml}
+                    ${ribbonHtml}
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
@@ -372,6 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== MODAL =====
     const modal = document.getElementById('product-modal');
+    const modalImage = document.querySelector('.modal-image');
+    const modalStock = document.getElementById('modal-stock');
     const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
     const modalCategory = document.getElementById('modal-category');
@@ -388,6 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         modalImg.src = product.image;
         modalImg.alt = product.name;
+        modalImage.classList.toggle('is-out-of-stock', Boolean(product.out_of_stock));
+        modalStock.hidden = !product.out_of_stock;
         modalTitle.textContent = product.name;
         modalCategory.textContent = CATEGORY_LABELS[product.category] || product.category;
         modalWeight.textContent = product.weight;

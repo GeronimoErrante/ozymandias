@@ -47,7 +47,8 @@
     "image": "yerbas/syl.webp",
     "weight": "500g",
     "description": "Estilo barbacuá, estacionamiento natural. Sabor ahumado tradicional.",
-    "category": "barbacua"
+    "category": "barbacua",
+    "out_of_stock": true
   },
   {
     "id": 6,
@@ -56,7 +57,8 @@
     "image": "yerbas/pindare.webp",
     "weight": "1kg",
     "description": "Yerba mate tradicional de alta calidad.",
-    "category": "tradicional"
+    "category": "tradicional",
+    "out_of_stock": true
   },
   {
     "id": 7,

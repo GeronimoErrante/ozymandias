@@ -1029,6 +1029,41 @@ select option {
     backdrop-filter: blur(6px);
 }
 
+/* ---------- Out of stock ---------- */
+.stock-ribbon {
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    z-index: 6;
+    width: 120%;
+    padding: 0.7rem 0;
+    background-color: #c62828;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-align: center;
+    transform: translateY(-50%) rotate(-8deg);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+}
+
+.stock-ribbon[hidden] {
+    display: none;
+}
+
+.is-out-of-stock .card-image,
+.modal-image.is-out-of-stock {
+    background-color: #9b9b97;
+}
+
+.is-out-of-stock .card-image img,
+.modal-image.is-out-of-stock img {
+    filter: grayscale(1);
+    opacity: 0.45;
+}
+
 .card-content {
     display: flex;
     flex-direction: column;
@@ -1517,6 +1552,7 @@ footer {
 }
 
 .modal-image {
+    position: relative;
     background-color: var(--color-surface-warm);
     overflow: hidden;
 }
