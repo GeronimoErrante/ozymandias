@@ -1779,6 +1779,31 @@ footer {
         gap: var(--spacing-md) var(--spacing-sm);
     }
 
+    /* Quick filters: one swipeable row instead of wrapping into stacked rows */
+    .chips {
+        --bleed: clamp(1.25rem, 5vw, 3rem);
+        align-self: stretch;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        /* Bleed to the screen edges so chips slide under the gutter, not a hard clip */
+        margin: -4px calc(-1 * var(--bleed));
+        padding: 4px var(--bleed);
+        overflow-x: auto;
+        scroll-padding-inline: var(--bleed);
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chip {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+    }
+
     .product-title {
         font-size: 1.3rem;
     }

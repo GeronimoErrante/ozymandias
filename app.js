@@ -355,6 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
             item.setAttribute('aria-pressed', String(isActive));
         });
 
+        // On mobile the chips scroll horizontally; keep the picked one in view
+        chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
         applyFilters();
     });
 
